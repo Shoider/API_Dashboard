@@ -1,6 +1,6 @@
-# CONAGUA - Formulario / API
+# CONAGUA - Dashboard / API
 
-Este proyecto representa la API de la aplicación CONAGUA, diseñada para proporcionar servicios backend al frontend de formulario VPN.
+Este proyecto representa la API de la aplicación CONAGUA, diseñada para proporcionar servicios backend al frontend del Darshboard.
 
 ## Tabla de Contenidos
 
@@ -14,7 +14,7 @@ Este proyecto representa la API de la aplicación CONAGUA, diseñada para propor
 
 ## Descripción
 
-Esta API proporciona los servicios backend necesarios para la aplicación CONAGUA. Permite realizar [la generacion del pdf y con los datos del formulario de vpn.
+Esta API proporciona los servicios backend necesarios para la aplicación CONAGUA. 
 
 ## Requisitos
 
@@ -28,8 +28,8 @@ Esta API proporciona los servicios backend necesarios para la aplicación CONAGU
     Si aún no tienes el código localmente, clona el repositorio desde GitHub:
 
     ```bash
-    git clone https://github.com/Shoider/API_FORM
-    cd API_FORM
+    git clone https://github.com/Shoider/API_Dashboard
+    cd API_Dashboard
     ```
 
 2.  **Crear un Entorno Virtual (Recomendado)**
