@@ -23,7 +23,8 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/form-counts", methods=["GET"])(self.get_form_counts)
         self.route("/api2/v1/weekly-registrations", methods=["GET"])(self.get_weekly_registrations)
         self.route("/api2/v1/old-weekly-registrations", methods=["GET"])(self.get_old_weekly_registrations)
-        self.route("/healthcheck", methods=["GET"])(self.healthcheck)
+        self.route("/api2/v1/weekly-stats", methods=["GET"])(self.get_weekly_stats)
+        self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
         """Function to fetch the request data"""
@@ -111,6 +112,15 @@ class FileGeneratorRoute(Blueprint):
             return jsonify(weekly_data), 200
         except Exception as e:
             self.logger.error(f"Error in get_weekly_registrations: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    def get_weekly_stats(self):
+        """Endpoint para obtener estadísticas semanales con porcentajes de cambio"""
+        try:
+            weekly_stats, status_code = self.service.get_weekly_registration_stats()
+            return jsonify(weekly_stats), status_code
+        except Exception as e:
+            self.logger.error(f"Error in get_weekly_stats: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):

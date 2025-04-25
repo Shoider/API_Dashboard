@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 from flask import jsonify
 from pymongo import ReturnDocument
 from logger.logger import Logger
@@ -10,59 +10,6 @@ class Service:
     def __init__(self, db_conn):
         self.logger = Logger()
         self.db_conn = db_conn
-
-    def get_all_VPN(self):
-        """Function to fetch all VPN registers from the database"""
-        try:
-            vpn = list(self.db_conn.db.vpn.find())
-            return self._convert_objectid_to_str(vpn)
-        except Exception as e:
-            self.logger.error(f"Error fetching all VPN registers from database: {e}")
-            return (
-                jsonify({"error": f"Error fetching all VPN registers from database: {e}"}),
-                500,
-            )
-
-    def add_VPN(self, new_vpn):
-        """Function to add a VPN register to the database with a custom ID"""
-        try:
-            now = datetime.datetime.now()
-            yy = now.strftime("%y")
-            mm = now.strftime("%m")
-            dd = now.strftime("%d")
-            base_id = f"{yy}{mm}{dd}"
-
-            # Atomically find and increment the daily counter
-            counter_doc = self.db_conn.db.vpnCounters.find_one_and_update(
-                {"_id": base_id},
-                {"$inc": {"seq": 1}},
-                upsert=True,
-                return_document=ReturnDocument.AFTER,
-            )
-
-            sequence = counter_doc.get("seq", 1)
-            padded_sequence = str(sequence).zfill(4)
-            custom_id = f"{base_id}{padded_sequence}"
-            new_vpn["_id"] = custom_id
-
-            self.db_conn.db.vpn.insert_one(new_vpn)
-            return {"_id": custom_id}, 201
-        except Exception as e:
-            self.logger.error(f"Error adding VPN register to database with custom ID: {e}")
-            return jsonify({"error": f"Error adding VPN register to database with custom ID: {e}"}), 500
-        
-    def _convert_objectid_to_str(self, data):
-        """Helper function to convert ObjectId to string in a list of dictionaries"""
-        if isinstance(data, list):
-            for item in data:
-                self._convert_objectid_to_str(item)
-        elif isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, ObjectId):
-                    data[key] = str(value)
-                elif isinstance(value, (list, dict)):
-                    self._convert_objectid_to_str(value)
-        return data
     
     ## NUEVO
 
@@ -96,3 +43,101 @@ class Service:
         except Exception as e:
             self.logger.error(f"Error querying {collection_name} for {formatted_date}: {e}")
             return None
+        
+    ## NUEVOSSS
+
+    def get_weekly_registration_stats(self):
+        """Obtiene estadísticas semanales de registros con porcentajes de cambio"""
+        try:
+            collections = ['vpnCounters', 'internetCounters', 'rfcCounters', 'telCounters']
+            label_mapping = {
+                'vpnCounters': 'vpn',
+                'internetCounters': 'internet',
+                'rfcCounters': 'rfc',
+                'telCounters': 'telefonia'
+            }
+            
+            end_date = datetime.now()
+            start_date = end_date - timedelta(weeks=6)
+            
+            results = {}
+            
+            for collection in collections:
+                # Obtener conteos por semana
+                weekly_counts = self._get_weekly_counts_from_daily(collection, start_date, end_date)
+                
+                # Calcular porcentajes de cambio
+                stats_with_change = self._calculate_weekly_changes(weekly_counts)
+                
+                # Formatear nombre para el frontend
+                formatted_name = label_mapping.get(collection, collection)
+                results[formatted_name] = stats_with_change
+            
+            return results, 200
+            
+        except Exception as e:
+            self.logger.error(f"Error getting weekly registration stats: {e}")
+            return {"error": f"Error getting weekly registration stats: {e}"}, 500
+    
+    def _get_weekly_counts_from_daily(self, collection_name, start_date, end_date):
+        """Obtiene conteos semanales sumando los registros diarios"""
+        weekly_counts = []
+        
+        # Generar todas las semanas en el rango
+        current_week_start = start_date - timedelta(days=start_date.weekday())
+        
+        while current_week_start <= end_date:
+            week_end = current_week_start + timedelta(days=6)
+            week_total = 0
+            
+            # Sumar registros para cada día de la semana
+            for day in range(7):
+                current_date = current_week_start + timedelta(days=day)
+                formatted_date = current_date.strftime("%y%m%d")
+                
+                record = self.get_daily_registration_count(collection_name, formatted_date)
+                week_total += record['seq'] if record else 0
+            
+            # Agregar datos de la semana
+            week_str = current_week_start.strftime("Semana #%U")
+            weekly_counts.append({
+                "week": week_str,
+                "count": week_total
+            })
+            
+            # Mover a la siguiente semana
+            current_week_start += timedelta(weeks=1)
+        
+        return weekly_counts
+    
+    
+    def _calculate_weekly_changes(self, weekly_counts):
+        """Calcula porcentajes de cambio semana a semana"""
+        if len(weekly_counts) < 2:
+            return weekly_counts
+        
+        # Ordenar por semana (más antigua primero)
+        sorted_counts = sorted(weekly_counts, key=lambda x: x['week'])
+        
+        # Calcular cambios porcentuales
+        for i in range(1, len(sorted_counts)):
+            current_count = sorted_counts[i]['count']
+            previous_count = sorted_counts[i-1]['count']
+            
+            # Manejar casos especiales con ceros
+            if previous_count == 0:
+                if current_count == 0:
+                    change_percent = 0.0
+                else:
+                    change_percent = 100.0  # Crecimiento infinito (de 0 a X)
+            else:
+                change_percent = ((current_count - previous_count) / previous_count) * 100
+            
+            sorted_counts[i]['percent'] = round(change_percent, 2)
+        
+        # La primera semana no tiene cambio porcentual
+        if len(sorted_counts) > 0:
+            sorted_counts[0]['percent'] = 0.0
+        
+        # Devolver solo las últimas 6 semanas
+        return sorted_counts[-6:]

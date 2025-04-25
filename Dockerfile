@@ -21,8 +21,9 @@ RUN pip install --no-cache-dir --upgrade pip && pip install -r requirements.txt
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl --fail http://healthcheck:8000/healthcheck || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl --fail http://dashboard_api:8000/api2/healthcheck || exit 1
 
 USER app
 
-ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "-w 4", "app:app"]
+
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "-w 2", "app:app"]
