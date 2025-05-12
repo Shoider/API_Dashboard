@@ -127,8 +127,9 @@ class FileGeneratorRoute(Blueprint):
     def vpnGet(self):
         """Endpoint para obtener los datos de VPN"""
         try:
-            vpn_data, status_code = self.service.get_vpn_data()
-            self.logger.debug("Datos obtenidos: ", vpn_data)
+            vpn_data, status_code = self.service.VPN_Registros_Resumen()
+            self.logger.debug("Datos obtenidos: ")
+            self.logger.debug(vpn_data)
             return jsonify(vpn_data), status_code
         except Exception as e:
             self.logger.error(f"Error en get_vpn_registrations: {e}")

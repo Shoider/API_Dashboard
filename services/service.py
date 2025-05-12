@@ -151,9 +151,9 @@ class Service:
             projection = {
                 "_id": 1,
                 "nombre": 1,
-                "extension": 1,
                 "correo": 1,
-                "movimiento": 1
+                "movimiento": 1,
+                "puestojefe": 1
             }
             registros_vpn = list(vpn_collection.find({}, projection))
             return registros_vpn, 200
