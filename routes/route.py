@@ -24,6 +24,7 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/weekly-registrations", methods=["GET"])(self.get_weekly_registrations)
         self.route("/api2/v1/old-weekly-registrations", methods=["GET"])(self.get_old_weekly_registrations)
         self.route("/api2/v1/weekly-stats", methods=["GET"])(self.get_weekly_stats)
+        self.route("/api2/v1/vpnGet", methods=["POST"])(self.vpnGet)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -121,6 +122,16 @@ class FileGeneratorRoute(Blueprint):
             return jsonify(weekly_stats), status_code
         except Exception as e:
             self.logger.error(f"Error in get_weekly_stats: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    def vpnGet(self):
+        """Endpoint para obtener los datos de VPN"""
+        try:
+            vpn_data, status_code = self.service.get_vpn_data()
+            self.logger.debug("Datos obtenidos: ", vpn_data)
+            return jsonify(vpn_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en get_vpn_registrations: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):
