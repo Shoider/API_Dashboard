@@ -160,3 +160,75 @@ class Service:
         except Exception as e:
             self.logger.error(f"Error al obtener datos de la colección 'vpn': {e}")
             return {"error": "Error al obtener datos de VPN"}, 500
+        
+    def Internet_Registros_Resumen(self):
+        """Te da un resumen de los registros VPN para el Dashboard"""
+        """
+        Extrae _id, nombreUsuario, correoUsuario, ipUsuario de todos los registros
+        en la colección 'internet'.
+        """
+        # Necesitamos devolver los registros asi:
+        # NoFormato, Nombre, Correo, Extension, Movimiento
+
+        try:
+            internet_collection = self.db_conn.db['internet']
+            projection = {
+                "_id": 1,
+                "nombreUsuario": 1,
+                "correoUsuario": 1,
+                "ipUsuario": 1,
+                "nombreJefe": 1
+            }
+            registros_internet = list(internet_collection.find({}, projection))
+            return registros_internet, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener datos de la colección 'internet': {e}")
+            return {"error": "Error al obtener datos de Internet"}, 500
+        
+    def Telefonia_Registros_Resumen(self):
+        """Te da un resumen de los registros VPN para el Dashboard"""
+        """
+        Extrae _id, nombreUsuario, correoUsuario, movimiento de todos los registros
+        en la colección 'telefonia'.
+        """
+        # Necesitamos devolver los registros asi:
+        # NoFormato, Nombre, Correo, Extension, Movimiento
+
+        try:
+            telefonia_collection = self.db_conn.db['tel']
+            projection = {
+                "_id": 1,
+                "nombreUsuario": 1,
+                "correoUsuario": 1,
+                "movimiento": 1,
+                "nombreJefe": 1
+            }
+            registros_telefonia = list(telefonia_collection.find({}, projection))
+            return registros_telefonia, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener datos de la colección 'telefonia': {e}")
+            return {"error": "Error al obtener datos de Telefonia"}, 500
+        
+    def RFC_Registros_Resumen(self):
+        """Te da un resumen de los registros RFC para el Dashboard"""
+        """
+        Extrae _id, nombreUsuario, correoUsuario, movimiento de todos los registros
+        en la colección 'rfc'.
+        """
+        # Necesitamos devolver los registros asi:
+        # NoFormato, Nombre, Correo, Extension, Movimiento
+
+        try:
+            rfc_collection = self.db_conn.db['rfc']
+            projection = {
+                "_id": 1,
+                "noticket": 1,
+                "memo": 1,
+                "descbreve": 1,
+                "nombreJefe": 1
+            }
+            registros_rfc = list(rfc_collection.find({}, projection))
+            return registros_rfc, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener datos de la colección 'telefonia': {e}")
+            return {"error": "Error al obtener datos de Telefonia"}, 500

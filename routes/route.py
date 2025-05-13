@@ -25,6 +25,9 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/old-weekly-registrations", methods=["GET"])(self.get_old_weekly_registrations)
         self.route("/api2/v1/weekly-stats", methods=["GET"])(self.get_weekly_stats)
         self.route("/api2/v1/vpnGet", methods=["POST"])(self.vpnGet)
+        self.route("/api2/v1/internetGet", methods=["POST"])(self.internetGet)
+        self.route("/api2/v1/telefoniaGet", methods=["POST"])(self.telefoniaGet)
+        self.route("/api2/v1/rfcGet", methods=["POST"])(self.rfcGet)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -128,11 +131,42 @@ class FileGeneratorRoute(Blueprint):
         """Endpoint para obtener los datos de VPN"""
         try:
             vpn_data, status_code = self.service.VPN_Registros_Resumen()
-            self.logger.debug("Datos obtenidos: ")
+            self.logger.debug("Datos obtenidos de VPN: ")
             self.logger.debug(vpn_data)
             return jsonify(vpn_data), status_code
         except Exception as e:
             self.logger.error(f"Error en get_vpn_registrations: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+    def internetGet(self):
+        """Endpoint para obtener los datos de VPN"""
+        try:
+            internet_data, status_code = self.service.Internet_Registros_Resumen()
+            self.logger.debug("Datos obtenidos de Internet: ")
+            self.logger.debug(internet_data)
+            return jsonify(internet_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en get_internet_registrations: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+    def telefoniaGet(self):
+        """Endpoint para obtener los datos de VPN"""
+        try:
+            telefonia_data, status_code = self.service.Telefonia_Registros_Resumen()
+            self.logger.debug("Datos obtenidos de Telefonia: ")
+            self.logger.debug(telefonia_data)
+            return jsonify(telefonia_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en get_telefonia_registrations: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    def rfcGet(self):
+        """Endpoint para obtener los datos de VPN"""
+        try:
+            rfc_data, status_code = self.service.RFC_Registros_Resumen()
+            self.logger.debug("Datos obtenidos de RFC: ")
+            self.logger.debug(rfc_data)
+            return jsonify(rfc_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en get_rfc_registrations: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):
