@@ -150,10 +150,10 @@ class Service:
             vpn_collection = self.db_conn.db['vpnMayo']
             projection = {
                 "_id": 1,
-                "nombre": 1,
-                "correo": 1,
-                "movimiento": 1,
-                "puestojefe": 1
+                "nombreEnlace": 1,
+                "telefonoEnlace": 1,
+                "nombreAutoriza": 1,
+                "puestoAutoriza": 1
             }
             registros_vpn = list(vpn_collection.find({}, projection))
             return registros_vpn, 200
