@@ -14,7 +14,7 @@ class Service:
     def get_analytics_data(self):
         """Function to get counts for all form types for the dashboard"""
         try:
-            collections = ['vpn', 'internet', 'rfc', 'tel']
+            collections = ['vpnMayo', 'internet', 'rfc', 'tel']
             analytics_data = []
             
             for collection in collections:
@@ -45,9 +45,9 @@ class Service:
     def get_weekly_registration_stats(self):
         """Obtiene estadísticas semanales de registros con porcentajes de cambio"""
         try:
-            collections = ['vpnCounters', 'internetCounters', 'rfcCounters', 'telCounters']
+            collections = ['vpnMayoCounters', 'internetCounters', 'rfcCounters', 'telCounters']
             label_mapping = {
-                'vpnCounters': 'vpn',
+                'vpnMayoCounters': 'vpn',
                 'internetCounters': 'internet',
                 'rfcCounters': 'rfc',
                 'telCounters': 'telefonia'
@@ -138,16 +138,16 @@ class Service:
         return sorted_counts[-6:]
 
     def VPN_Registros_Resumen(self):
-        """Te da un resumen de los registros VPN para el Dashboard"""
+        """Te da un resumen de los registros VPN 2.0 para el Dashboard"""
         """
         Extrae _id, nombre, extension, correo y movimiento de todos los registros
-        en la colección 'vpn'.
+        en la colección 'vpnMayo'.
         """
         # Necesitamos devolver los registros asi:
         # NoFormato, Nombre, Correo, Extension, Movimiento
 
         try:
-            vpn_collection = self.db_conn.db['vpn']
+            vpn_collection = self.db_conn.db['vpnMayo']
             projection = {
                 "_id": 1,
                 "nombre": 1,
@@ -158,8 +158,8 @@ class Service:
             registros_vpn = list(vpn_collection.find({}, projection))
             return registros_vpn, 200
         except Exception as e:
-            self.logger.error(f"Error al obtener datos de la colección 'vpn': {e}")
-            return {"error": "Error al obtener datos de VPN"}, 500
+            self.logger.error(f"Error al obtener datos de la colección 'vpnMayo': {e}")
+            return {"error": "Error al obtener datos de VPN_Mayo"}, 500
         
     def Internet_Registros_Resumen(self):
         """Te da un resumen de los registros VPN para el Dashboard"""
