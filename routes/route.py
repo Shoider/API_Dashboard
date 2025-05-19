@@ -60,8 +60,8 @@ class FileGeneratorRoute(Blueprint):
             start_of_week = today - timedelta(days=days_to_subtract)
 
             weekly_data = []
-            collections = ['vpnCounters', 'internetCounters', 'rfcCounters', 'telCounters']
-            form_labels = {'vpnCounters': 'VPN', 'internetCounters': 'Internet', 'rfcCounters': 'RFC', 'telCounters': 'Telefono'}
+            collections = ['vpnMayoCounters', 'internetCounters', 'rfcCounters', 'telCounters']
+            form_labels = {'vpnMayoCounters': 'VPN', 'internetCounters': 'Internet', 'rfcCounters': 'RFC', 'telCounters': 'Telefono'}
 
             for i in range(6):  # Get data for the last 6 days (including today if it's within the week)
                 current_date = start_of_week + timedelta(days=i)
@@ -96,8 +96,8 @@ class FileGeneratorRoute(Blueprint):
             start_of_previous_week = current_monday - timedelta(weeks=1)
 
             weekly_data = []
-            collections = ['vpnCounters', 'internetCounters', 'rfcCounters', 'telCounters']
-            form_labels = {'vpnCounters': 'VPN', 'internetCounters': 'Internet', 'rfcCounters': 'RFC', 'telCounters': 'Telefono'}
+            collections = ['vpnMayoCounters', 'internetCounters', 'rfcCounters', 'telCounters']
+            form_labels = {'vpnMayoCounters': 'VPN', 'internetCounters': 'Internet', 'rfcCounters': 'RFC', 'telCounters': 'Telefono'}
 
             for i in range(6):  # Get data for the last 6 days (including today if it's within the week)
                 current_date = start_of_previous_week + timedelta(days=i)
