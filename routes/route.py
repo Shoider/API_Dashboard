@@ -1,12 +1,6 @@
-import tempfile
-import shutil
-import os
-
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
-from io import BytesIO
 from logger.logger import Logger
-from marshmallow import ValidationError
 
 class FileGeneratorRoute(Blueprint):
     """Class to handle the routes for file generation"""
