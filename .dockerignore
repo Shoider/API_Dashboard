@@ -1,16 +1,21 @@
+# Archivos y carpetas de Python
 *.pyc
-__pycache__
+__pycache__/
+venv/
+
+# Archivos de logs
 *.log
-*.env
-*.pyc
-__pycache__
-*.log
+schema.log
+
+# Archivos de entorno y configuración local
 *.env
 .DS_Store
+
+# Archivos de Docker y control de versiones
 Dockerfile
-venv
-.git
 .dockerignore
+.git
 .gitignore
-readme
-schema.log
+
+# Archivos de documentación
+README
