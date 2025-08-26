@@ -229,3 +229,17 @@ class Service:
         except Exception as e:
             self.logger.error(f"Error al obtener datos de la colección 'telefonia': {e}")
             return {"error": "Error al obtener datos de Telefonia"}, 500
+        
+    # filepath: service.py
+    def RFC_Filtro(self):
+        """Traer el json para descarga de los datos ya filtrados"""
+        try: 
+            rfc_filtro_collection = self.db_conn.db['PruebaIP2']    
+            projection = {
+                "_id": 0,  # No incluir el _id de Mongo                
+            }        
+            data = list(rfc_filtro_collection.find({}, projection))
+            return data, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener la colección 'RFC_Filtro':{e}")
+            return {"error": "Error al obtener el filtrado de RFC"}, 500

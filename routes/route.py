@@ -22,6 +22,7 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/internetGet", methods=["POST"])(self.internetGet)
         self.route("/api2/v1/telefoniaGet", methods=["POST"])(self.telefoniaGet)
         self.route("/api2/v1/rfcGet", methods=["POST"])(self.rfcGet)
+        self.route("/api2/v1/rfcFiltrado", methods=["POST"])(self.rfcFiltrado)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -161,6 +162,18 @@ class FileGeneratorRoute(Blueprint):
             return jsonify(rfc_data), status_code
         except Exception as e:
             self.logger.error(f"Error en get_rfc_registrations: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    # filepath: routes.py
+    def rfcFiltrado(self):
+        """Filtrado ya hecho en mongodb"""
+        try: 
+            rfc_filter_data, status_code = self.service.RFC_Filtro()
+            self.logger.debug("Datos obtenidos del filtro de RFC")
+            self.logger.debug(rfc_filter_data)
+            return jsonify(rfc_filter_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en rfc_filtrado:{e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):
