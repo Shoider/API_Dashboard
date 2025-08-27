@@ -23,6 +23,7 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/telefoniaGet", methods=["POST"])(self.telefoniaGet)
         self.route("/api2/v1/rfcGet", methods=["POST"])(self.rfcGet)
         self.route("/api2/v1/rfcFiltrado", methods=["POST"])(self.rfcFiltrado)
+        self.route("/api2/v1/telFiltrado", methods=["POST"])(self.telFiltrado)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -175,8 +176,18 @@ class FileGeneratorRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error en rfc_filtrado:{e}")
             return jsonify({"error": "Internal server error"}), 500
+        
+    def telFiltrado(self):
+        """Filtrado ya hecho en mongodb"""
+        try: 
+            tel_filter_data, status_code = self.service.Telefonia_Filtro()
+            self.logger.debug("Datos obtenidos del filtro de Telefonia")
+            self.logger.debug(tel_filter_data)
+            return jsonify(tel_filter_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en rfc_filtrado:{e}")
+            return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):
         """Function to check the health of the services API inside the docker container"""
         return jsonify({"status": "Up"}), 200
-

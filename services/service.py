@@ -242,4 +242,17 @@ class Service:
             return data, 200
         except Exception as e:
             self.logger.error(f"Error al obtener la colección 'RFC_Filtro':{e}")
-            return {"error": "Error al obtener el filtrado de RFC"}, 500
+            return {"error": "Error al obtener el filtrado de RFC"}, 500     
+    
+    def Telefonia_Filtro(self):
+        """Traer el json para descarga de los datos ya filtrados"""
+        try: 
+            tel_filtro_collection = self.db_conn.db['PruebaTel']    
+            projection = {
+                "_id": 0,  # No incluir el _id de Mongo                
+            }        
+            data = list(tel_filtro_collection.find({}, projection))
+            return data, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener la colección 'Tel_Filtro':{e}")
+            return {"error": "Error al obtener el filtrado de RFC"}, 500            
