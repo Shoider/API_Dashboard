@@ -255,4 +255,29 @@ class Service:
             return data, 200
         except Exception as e:
             self.logger.error(f"Error al obtener la colección 'Tel_Filtro':{e}")
-            return {"error": "Error al obtener el filtrado de RFC"}, 500            
+            return {"error": "Error al obtener el filtrado de RFC"}, 500    
+
+    def VPN_Filtro(self):
+        """Traer el json para descarga de los datos ya filtrados"""
+        try: 
+            vpn_filtro_collection = self.db_conn.db['PruebaVPN']    
+            projection = {
+                "_id": 0,  # No incluir el _id de Mongo                
+            }        
+            data = list(vpn_filtro_collection.find({}, projection))
+            return data, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener la colección 'VPN_Filtro':{e}")
+            return {"error": "Error al obtener el filtrado de RFC"}, 500         
+    def Inter_Filtro(self):
+        """Traer el json para descarga de los datos ya filtrados"""
+        try: 
+            vpn_filtro_collection = self.db_conn.db['PruebaInter']    
+            projection = {
+                "_id": 0,  # No incluir el _id de Mongo                
+            }        
+            data = list(vpn_filtro_collection.find({}, projection))
+            return data, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener la colección 'Inter_Filtro':{e}")
+            return {"error": "Error al obtener el filtrado de RFC"}, 500  

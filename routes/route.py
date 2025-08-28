@@ -24,6 +24,8 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/rfcGet", methods=["POST"])(self.rfcGet)
         self.route("/api2/v1/rfcFiltrado", methods=["POST"])(self.rfcFiltrado)
         self.route("/api2/v1/telFiltrado", methods=["POST"])(self.telFiltrado)
+        self.route("/api2/v1/vpnFiltrado", methods=["POST"])(self.vpnFiltrado)
+        self.route("/api2/v1/interFiltrado", methods=["POST"])(self.interFiltrado)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -186,6 +188,26 @@ class FileGeneratorRoute(Blueprint):
             return jsonify(tel_filter_data), status_code
         except Exception as e:
             self.logger.error(f"Error en rfc_filtrado:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+    def vpnFiltrado(self):
+        """Filtrado ya hecho en mongodb"""
+        try: 
+            vpn_filter_data, status_code = self.service.VPN_Filtro()
+            self.logger.debug("Datos obtenidos del filtro de VPN")
+            self.logger.debug(vpn_filter_data)
+            return jsonify(vpn_filter_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en vpn_filtrado:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+    def interFiltrado(self):
+        """Filtrado ya hecho en mongodb"""
+        try: 
+            inter_filter_data, status_code = self.service.Inter_Filtro()
+            self.logger.debug("Datos obtenidos del filtro de Internet")
+            self.logger.debug(inter_filter_data)
+            return jsonify(inter_filter_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en inter_filtrado:{e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def healthcheck(self):
