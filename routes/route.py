@@ -25,7 +25,12 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/rfcFiltrado", methods=["POST"])(self.rfcFiltrado)
         self.route("/api2/v1/telFiltrado", methods=["POST"])(self.telFiltrado)
         self.route("/api2/v1/vpnFiltrado", methods=["POST"])(self.vpnFiltrado)
+        self.route("/api2/v1/borrarRFC", methods=["POST"])(self.borrarregistro_RFC)
+        self.route("/api2/v1/borrarVPN", methods=["POST"])(self.borrarregistro_VPN)
+        self.route("/api2/v1/borrarInter", methods=["POST"])(self.borrarregistro_Inter)
+        self.route("/api2/v1/borrarTel", methods=["POST"])(self.borrarregistro_Tel)
         self.route("/api2/v1/interFiltrado", methods=["POST"])(self.interFiltrado)
+
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -209,7 +214,86 @@ class FileGeneratorRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error en inter_filtrado:{e}")
             return jsonify({"error": "Internal server error"}), 500
+    def borrarregistro_RFC(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid data"}), 400
+            datosRegistro, status_code = self.service.obtener_datos_por_id('rfc', data.get('id'))
+            if status_code == 201:
+                
+                self.logger.info(f"Registro encontrado con id: {datosRegistro.get('_id')}")
 
+                noformato = datosRegistro.get('_id')
+                self.service.borrar_registro(noformato,"rfc")
+                self.service.borrar_contador(noformato,"rfcCounters")
+
+                return jsonify({"message": "Datos encontrados y eliminados", "datos": datosRegistro}), 200            
+            
+        except Exception as e:
+            self.logger.error(f"Error en borrar registro:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    def borrarregistro_VPN(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid data"}), 400
+            datosRegistro, status_code = self.service.obtener_datos_por_id('vpnMayo', data.get('id'))
+            if status_code == 201:
+                
+                self.logger.info(f"Registro encontrado con id: {datosRegistro.get('_id')}")
+
+                noformato = datosRegistro.get('_id')
+                self.service.borrar_registro(noformato,"vpnMayo")
+                self.service.borrar_contador(noformato,"vpnMayoCounters")
+
+                return jsonify({"message": "Datos encontrados y eliminados", "datos": datosRegistro}), 200            
+            
+        except Exception as e:
+            self.logger.error(f"Error en borrar registro:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
+    def borrarregistro_Tel(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid data"}), 400
+            datosRegistro, status_code = self.service.obtener_datos_por_id('tel', data.get('id'))
+            if status_code == 201:
+                
+                self.logger.info(f"Registro encontrado con id: {datosRegistro.get('_id')}")
+
+                noformato = datosRegistro.get('_id')
+                self.service.borrar_registro(noformato,"tel")
+                self.service.borrar_contador(noformato,"telCounters")
+
+                return jsonify({"message": "Datos encontrados y eliminados", "datos": datosRegistro}), 200            
+            
+        except Exception as e:
+            self.logger.error(f"Error en borrar registro:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+    
+    def borrarregistro_Inter(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid data"}), 400
+            datosRegistro, status_code = self.service.obtener_datos_por_id('internet', data.get('id'))
+            if status_code == 201:
+                
+                self.logger.info(f"Registro encontrado con id: {datosRegistro.get('_id')}")
+
+                noformato = datosRegistro.get('_id')
+                self.service.borrar_registro(noformato,"internet")
+                self.service.borrar_contador(noformato,"internetCounters")
+
+                return jsonify({"message": "Datos encontrados y eliminados", "datos": datosRegistro}), 200            
+            
+        except Exception as e:
+            self.logger.error(f"Error en borrar registro:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+        
     def healthcheck(self):
         """Function to check the health of the services API inside the docker container"""
         return jsonify({"status": "Up"}), 200

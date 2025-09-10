@@ -281,3 +281,38 @@ class Service:
         except Exception as e:
             self.logger.error(f"Error al obtener la colección 'Inter_Filtro':{e}")
             return {"error": "Error al obtener el filtrado de RFC"}, 500  
+    def borrar_registro(self, noFormato, collection_name):
+        
+        collection = self.db_conn.db[collection_name]
+        resultado = collection.delete_one({'_id': noFormato})
+
+        if resultado:
+            return {"mensaje":"registro eliminado con exito"},404
+        else:
+            return {"mensaje":"id no encontrado"},400
+        
+    def borrar_contador(self, noFormato, collection_name_counter):
+        
+        id_documento = noFormato[:6]
+        collection = self.db_conn.db[collection_name_counter]
+        resultado = collection.update_one({'_id': id_documento}, {'$inc':{'seq':-1}})
+        if resultado:
+            return {"mensaje":"contador eliminado con exito"},404
+        else:
+            return {"mensaje":"id no encontrado"},400
+    def obtener_datos_por_id(self, collection_name: str, document_id: str) -> dict:            
+            
+            try:
+                # Obtener la colección desde la base de datos
+                collection = self.db_conn.db[collection_name]
+                
+                # --- El paso más importante: Convertir el string a ObjectId ---
+                datos = collection.find_one({'_id': document_id})
+                                
+                # Regresamos el diccionario de datos 
+                return datos, 201            
+                
+            except Exception as e:
+                # Manejar otros posibles errores (ej. de conexión)
+                print(f"Ocurrió un error inesperado: {e}")
+                return None, 500
