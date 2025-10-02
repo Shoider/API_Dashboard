@@ -30,7 +30,7 @@ class FileGeneratorRoute(Blueprint):
         self.route("/api2/v1/borrarInter", methods=["POST"])(self.borrarregistro_Inter)
         self.route("/api2/v1/borrarTel", methods=["POST"])(self.borrarregistro_Tel)
         self.route("/api2/v1/interFiltrado", methods=["POST"])(self.interFiltrado)
-
+        self.route("/api2/v1/registroErrores", methods=["GET"])(self.registroErrores)
         self.route("/api2/healthcheck", methods=["GET"])(self.healthcheck)
 
     def fetch_request_data(self):
@@ -293,7 +293,15 @@ class FileGeneratorRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error en borrar registro:{e}")
             return jsonify({"error": "Internal server error"}), 500
-        
+    def registroErrores(self):
+        """Registro de errores"""
+        try: 
+            analytic_data, status_code = self.service.obtener_registro_errores()
+            return jsonify(analytic_data), status_code
+        except Exception as e:
+            self.logger.error(f"Error en errores_filtrado:{e}")
+            return jsonify({"error": "Internal server error"}), 500
+                
     def healthcheck(self):
         """Function to check the health of the services API inside the docker container"""
         return jsonify({"status": "Up"}), 200

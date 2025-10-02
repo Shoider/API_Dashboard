@@ -316,3 +316,30 @@ class Service:
                 # Manejar otros posibles errores (ej. de conexión)
                 print(f"Ocurrió un error inesperado: {e}")
                 return None, 500
+    def obtener_registro_errores(self):
+        """"
+        Obtrendremos los datos de la base de datos errores 
+        Base de datos        
+        Mensaje
+        Fecha
+        """
+        try:
+            errores_collection = self.db_conn.db['Errores']
+            projection = {
+                "_id": 1,
+                "Base de datos": 1,
+                "Mensaje": 1,
+                "Fecha": 1,
+            }
+            registros_telefonia = list(errores_collection.find({}, projection))
+            analytic_data=[]
+            for registro in registros_telefonia:
+                analytic_data.append({
+                    "Bases": registro.get("Base de datos", ""),
+                    "Mensaje": registro.get("Mensaje", ""),
+                    "Fecha":registro.get("Fecha","")
+                })
+            return analytic_data, 200
+        except Exception as e:
+            self.logger.error(f"Error al obtener datos de la colección 'errores': {e}")
+            return {"error": "Error al obtener datos de Errores"}, 500
